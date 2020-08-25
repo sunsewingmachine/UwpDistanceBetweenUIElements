@@ -1,0 +1,447 @@
+﻿<Page
+    x:Class="SharedLibrary.Views.LearnModePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SharedLibrary.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:conv ="using:SharedLibrary.Converters"
+    mc:Ignorable="d"
+    KeyDown="LearnModePage_OnKeyDown"
+    SizeChanged="LearnModePage_OnSizeChanged"
+    RequestedTheme="{x:Bind MyTheme.RequestedTheme, Mode=OneWay}"
+    Background="{x:Bind MyTheme.Brush1, Mode=OneWay}" >
+
+    <Page.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/SharedLibrary/Common/SharedStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="BorderStyle" TargetType="Grid">
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+            <Style x:Key="TopBorderStyle" TargetType="Grid">
+                <Setter Property="BorderBrush" Value="Black" />
+                <Setter Property="BorderThickness" Value="0 1 0 0" />
+            </Style>
+            <Style x:Key="RightBorderStyle" TargetType="Grid">
+                <Setter Property="BorderBrush" Value="Black" />
+                <Setter Property="BorderThickness" Value="0 0 1 0" />
+            </Style>
+            <Style x:Key="BottomBorderStyle" TargetType="ScrollViewer">
+                <Setter Property="BorderBrush" Value="Black" />
+                <Setter Property="BorderThickness" Value="0 0 0 1" />
+            </Style>
+            <conv:ObjectToVisibilityConverter x:Key="ObjectToVisibility" />
+            <conv:StringToUriConverter x:Key="StringToUri" />
+
+        </ResourceDictionary>
+    </Page.Resources>
+
+
+    <Grid HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="68*"/>
+            <RowDefinition Height="32*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <Image Stretch="Fill"
+               Grid.Row="1"
+               Grid.RowSpan="3"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"
+               Opacity="{x:Bind MyTheme.ImageOpacity, Mode=OneWay}"
+               Source="{x:Bind MyTheme.BackImage, Mode=OneWay}" />
+
+        <Grid Grid.Row="0" 
+              BorderThickness="0 0 0 2"
+              BorderBrush="Goldenrod"
+              Background="{x:Bind MyTheme.Brush2, Mode=OneWay}">
+            
+            <Grid HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Stretch">
+
+                <TextBlock FontSize="40"
+                           HorizontalAlignment="Center"
+                           FontWeight="Thin"
+                           Foreground="{x:Bind MyTheme.Brush2Text, Mode=OneWay}"
+                           Margin="18"
+                           Text="{Binding SubLevelName}" />
+
+
+            </Grid>
+
+
+            <StackPanel Grid.Row="0" 
+                        AllowFocusOnInteraction="True"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+
+                <InkToolbar x:Name="inkToolbar" 
+                            Height="90"
+                            VerticalAlignment="Top" 
+                            HorizontalAlignment="Center"
+                            TargetInkCanvas="{x:Bind inkCanvas}">
+                </InkToolbar>
+
+                <Button Content="Save" 
+                        Width="70" 
+                        Background="Transparent"
+                        VerticalAlignment="Stretch"
+                        FontSize="10" 
+                        Margin="0 0 0 0" 
+                        Click="inkCanvas_SaveClick">
+                </Button>
+
+
+                <Button Margin="10" Padding="10" 
+                        Background="Gainsboro" 
+                        Foreground="Black"
+                        IsEnabled="True"
+                        Visibility="Collapsed"
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Right"                
+                        Content="Options" 
+                        Click="OptionsPage_Click"/>
+
+            </StackPanel>
+
+        </Grid>
+
+
+        <Grid Grid.Row="1" Margin="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+
+            <Image x:Name="ImgNextItem" 
+                   Margin="0 0 0 -80"
+                   Opacity="0.8"
+                   Stretch="Fill"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="3"
+                   VerticalAlignment="Stretch"
+                   HorizontalAlignment="Left"
+                   Source="/SharedLibrary/Common/Images/halfoval.png"/>
+
+            <Image x:Name="ImgNextItem2" 
+                   Margin="0 0 10 -80"
+                   Opacity="0.5"
+                   Stretch="Fill"
+                   Grid.Column="0"
+                   Grid.ColumnSpan="3"
+                   Height="38"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   Source="/SharedLibrary/Common/Images/border1.png"/>
+
+            <StackPanel x:Name="StkNextItem" 
+                        Grid.Column="1" 
+                        Opacity="{StaticResource NextPrevImageOpacity}"
+                        Tapped="StkNextItem_OnTapped"
+                        Margin="0 0 0 0"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding NextItem, Mode=OneWay, Converter={StaticResource ObjectToVisibility}}" 
+                        Orientation="Vertical">
+
+                <Image x:Name="ImgNext" 
+                       Height="{StaticResource SmallImageHeight}" 
+                       Width="{StaticResource SmallImageWidth}"
+                       Stretch="Fill"
+                       Source="{Binding NextItem.ImagePath,Converter={ThemeResource StringToUri}}"/>
+
+                <TextBlock FontSize="30" 
+                           Foreground="Black"
+                           HorizontalAlignment="Center" 
+                           Text="{Binding NextItem.Title, Mode=OneWay}"/>
+
+                <TextBlock HorizontalAlignment="Center" 
+                           Visibility="Collapsed"
+                           VerticalAlignment="Center">
+                    <Hyperlink Click="NextHyperLink_Clicked">Go To Next</Hyperlink>
+                </TextBlock>
+            </StackPanel>
+
+
+            <Image x:Name="ImgPrevItem" 
+                   Margin="0"
+                   Opacity="0.6"
+                   Stretch="Fill"
+                   FlowDirection="RightToLeft"
+                   Grid.Column="4"
+                   Grid.ColumnSpan="3"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   Height="900" Width="320"
+                   Source="/SharedLibrary/Common/Images/halfoval.png" 
+                   RenderTransformOrigin="0.5,0.5">
+            </Image>
+
+
+            <Image x:Name="ImgPrevItem2" 
+                   Margin="10 0 0 0"
+                   Opacity="0.5"
+                   Stretch="Fill"
+                   FlowDirection="RightToLeft"
+                   Grid.Column="4"
+                   Grid.ColumnSpan="3"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   Height="38" Width="320"
+                   Source="/SharedLibrary/Common/Images/border1.png" 
+                   RenderTransformOrigin="0.5,0.5">
+            </Image>
+
+
+            <StackPanel x:Name="StkPrevItem" 
+                        Tapped="StkPrevItem_OnTapped" 
+                        Grid.Column="5" 
+                        Opacity="{StaticResource NextPrevImageOpacity}"
+                        Margin="0 0 0 0"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding PrevItem, Mode=OneWay, Converter={StaticResource ObjectToVisibility}}" 
+                        Orientation="Vertical">
+
+                <Image x:Name="ImgPrev" 
+                       Height="{StaticResource SmallImageHeight}" 
+                       Width="{StaticResource SmallImageWidth}"
+                       Stretch="Fill"
+                       Source="{Binding PrevItem.ImagePath, Mode=OneWay,Converter={ThemeResource StringToUri}}"/>
+
+                <TextBlock FontSize="30" 
+                           Foreground="Black"
+                           HorizontalAlignment="Center" 
+                           Text="{Binding PrevItem.Title, Mode=OneWay}"/>
+            
+                <TextBlock HorizontalAlignment="Center" 
+                           Visibility="Collapsed"
+                           VerticalAlignment="Center"><Hyperlink Click="PrevHyperLink_Clicked">Go To Previous</Hyperlink></TextBlock>
+            
+            </StackPanel>
+            
+
+            <Grid Grid.Column="3" 
+                  HorizontalAlignment="Center"
+                  Background="Transparent"
+                  BorderBrush="DarkGoldenrod"
+                  BorderThickness="0"
+                  Padding="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+
+                <StackPanel Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            Orientation="Vertical">
+
+                        <Viewbox x:Name="ViewboxMain"
+                                 HorizontalAlignment="Center" >
+
+                            <Grid Grid.Row="1" 
+                                  Background="Transparent"
+                                  BorderBrush="Blue"
+                                  BorderThickness="0"
+                                  Height="450" Width="800"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center">
+
+                                <TextBox 
+                                    x:Name="TbJustForFocus"
+                                    Height="1" Width="1" Opacity="0.1"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"/>
+
+                                <Image x:Name="mainImage" 
+                                       AllowFocusOnInteraction="True"
+                                       FocusVisualMargin="50"
+                                       ImageOpened="OnImageOpened" 
+                                       Margin="0"
+                                       Height="450" Width="800"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Stretch="Uniform"
+                                       Source="{Binding CurrentItem.ImagePath, Mode=OneWay, Converter={ThemeResource StringToUri}}"/>
+
+                                <InkCanvas x:Name="inkCanvas"
+                                           Height="450" Width="800"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+
+                    </Grid>
+                        </Viewbox>
+
+                    <TextBlock FontSize="58" 
+                               FontWeight="SemiBold"
+                               Margin="0 10 0 0"
+                               Foreground="White"
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center" 
+                               Text="{Binding CurrentItem.Title, Mode=OneWay}" />
+
+                    <!--<TextBlock Margin="0 0 0 0" 
+                               FontSize="30"
+                               Foreground="Goldenrod"
+                               HorizontalAlignment="Stretch"
+                               TextAlignment="Center"
+                               TextWrapping="WrapWholeWords" 
+                               Text="{Binding CurrentItem.Description}"/>-->
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        
+        <Grid Grid.Row="2" Margin="0 0 0 0"
+              BorderThickness="0 0 0 2"
+              Background="{x:Bind MyTheme.Brush2, Mode=OneWay}"
+              BorderBrush="Goldenrod"
+              Style="{ThemeResource BorderStyle}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" 
+                  Style="{ThemeResource RightBorderStyle}">
+
+                <StackPanel Margin="30 0" 
+                            Orientation="Vertical" 
+                            VerticalAlignment="Center">
+
+                    <CheckBox Margin="0"
+                              RequestedTheme="{x:Bind MyTheme.RequestedTheme, Mode=OneWay}"
+                              Content="Auto Play Next"
+                              IsChecked="{Binding AutoGoNextEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                              Unchecked="AutoGoNext_Changed" Checked="AutoGoNext_Changed" />
+
+                    <CheckBox Margin="0"
+                              RequestedTheme="{x:Bind MyTheme.RequestedTheme, Mode=OneWay}"
+                              Content="Read Name"
+                              IsChecked="{Binding ReadNameEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+                    <CheckBox Margin="0"
+                              RequestedTheme="{x:Bind MyTheme.RequestedTheme, Mode=OneWay}"
+                              Content="Read Description"
+                              IsChecked="{Binding ReadDescriptionEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+                    <CheckBox Margin="0"
+                              RequestedTheme="{x:Bind MyTheme.RequestedTheme, Mode=OneWay}"
+                              Content="Read Long Description"
+                              IsChecked="{Binding ReadLongDescriptionEnabled,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <SymbolIcon Symbol="RepeatAll"/>
+
+                        <ComboBox x:Name="CboRepeat" 
+                              Header="" 
+                              Margin="10 5 0 5"
+                              RequestedTheme="{x:Bind MyTheme.RequestedTheme, Mode=OneWay}"
+                              HorizontalAlignment="Stretch"
+                              SelectionChanged="CboRepeat_OnSelectionChanged"
+                              ItemsSource="{x:Bind repeats, Mode=OneWay}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <SymbolIcon Symbol="Zoom" RenderTransformOrigin="0.5,0.5">
+                            <SymbolIcon.RenderTransform>
+                                <CompositeTransform Rotation="90"/>
+                            </SymbolIcon.RenderTransform>
+                        </SymbolIcon>
+
+                    <Slider x:Name="SliderImageSize" 
+                            Minimum="1"
+                            Margin="10 0 0 0"
+                            StepFrequency="1"
+                            Value="50"
+                            Width="140"
+                            ValueChanged="SliderImageSize_OnValueChanged"
+                            Maximum="100" />
+                    </StackPanel>
+
+
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Column="1" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Margin="20" 
+                           FontSize="30"
+                           Foreground="Goldenrod"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Center"
+                           TextWrapping="WrapWholeWords" 
+                           Text="{Binding CurrentItem.Description}"/>
+
+                <ScrollViewer 
+                    Margin="10"
+                    Grid.Row="1"
+                    VerticalAlignment="Center" >
+                    <StackPanel>
+                        <TextBlock FontSize="22"
+                                   HorizontalAlignment="Stretch"
+                                   TextAlignment="Center"
+                                   FontWeight="Thin"
+                                   TextWrapping="WrapWholeWords" 
+                                   Foreground="{x:Bind MyTheme.Brush2Text, Mode=OneWay}"
+                                   Text="{Binding CurrentItem.LongDescription}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <Grid Grid.Column="2" Width="3" Visibility="Collapsed">
+                <GridView x:Name="GrdImages" 
+                          Margin="10"
+                          VerticalAlignment="Center"
+                          ItemsSource="{x:Bind ViewModel.GoogleImages, Mode=OneWay}">
+
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid MaximumRowsOrColumns="1" Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                                <Image Stretch="Fill" 
+                                       Height="80" Width="80" 
+                                       Source="{Binding Url}"/>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </Grid>
+
+        </Grid>
+
+        <!--<TextBlock x:Name="TxtTime"
+                   FontSize="22"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Margin="5" Foreground="Goldenrod"
+                   Text="{Binding SecIncrement,Mode=OneWay}" />-->
+    </Grid>
+</Page>
